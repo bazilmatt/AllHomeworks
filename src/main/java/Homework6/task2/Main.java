@@ -15,12 +15,11 @@ import java.io.*;
 public class Main {
 
 
-    public static void main(String[] args) throws IOException {
+    public static void main(String[] args) {
+        PhraseGenerator pg = new PhraseGenerator();
 
-        for (int i = 0; i < 5; i++) {
-            PhraseGenerator pg = new PhraseGenerator();
-            pg.getFiles("test",2, 100, pg.generateDictionary(), 80);
-        }
+        pg.getFiles("test",3, 20000, pg.generateDictionary(), 80);
+
 
     }
 }
