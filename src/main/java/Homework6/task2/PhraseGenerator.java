@@ -1,10 +1,7 @@
 package Homework6.task2;
 
-import java.io.File;
-import java.io.IOException;
+
 import java.util.Random;
-import java.util.Set;
-import java.util.TreeSet;
 
 /**
  * Предложение состоит из 1<=n1<=15 слов. В предложении после произвольных слов могут находиться запятые.
@@ -25,12 +22,9 @@ import java.util.TreeSet;
 public class PhraseGenerator {
 
     Random rnd = new Random();
-    static Set words = new TreeSet();
-    private int n4 = 1000; // number of words in dictionary
-    private int n1 = 15; // letters in one word
-    private int n2 = 15; // words in one sentence
-    private int n3 = 20; // sentences in one paragraph
-    private String[] randomWords = new String[n4]; // words dictionary - propability to take one 1/n4
+   // static Set words = new TreeSet();
+    private final int n4 = 1000; // number of words in dictionary
+    private final String[] randomWords = new String[n4]; // words dictionary - propability to take one 1/n4
     private final String[] endState = {"! ",". ","? "}; // ends of sentences
 
 
@@ -39,22 +33,26 @@ public class PhraseGenerator {
     StringBuilder randomParagrath = new StringBuilder();
 
 
-    public void getFiles(String path, int n, int size, String[] words, int probability) throws IOException {
-        File file = new File("bbb");
-        file.createNewFile();
+//    public void getFiles(String path, int n, int size, String[] words, int probability) throws IOException {
+//        File file = new File("bbb");
+        //file.createNewFile();
+//    }
+
+    public String generateWord(){
+        // letters in one word
+        int n1 = 15;
+        char[] word = new char[random.nextInt(n1) + 1];
+        for (int j = 0; j < word.length; j++) {
+            word[j] = (char) ('a' + random.nextInt(26));
+        }
+        return new String(word);
     }
 
-
-    public String[] generateDictionary() {
+    public void generateDictionary() {
         int n4max = random.nextInt(n4);
         for (int i = 0; i < n4max; i++) {
-            char[] word = new char[random.nextInt(n1) + 1];
-            for (int j = 0; j < word.length; j++) {
-                word[j] = (char) ('a' + random.nextInt(26));
-            }
-            randomWords[i] = new String(word);
+            randomWords[i] = generateWord();
         }
-        return randomWords;
     }
 
     public String twentyPercent(){
@@ -69,10 +67,17 @@ public class PhraseGenerator {
     public StringBuilder generateSentence(){
         randomSentence.setLength(0);
         generateDictionary();
+        // words in one sentence
+        int n2 = 15;
         int n2max = random.nextInt(n2);
         for (int i = 0; i < n2max; i++) {
-            randomSentence.append(randomWords[rnd.nextInt(randomWords.length)]);
-            randomSentence.substring(0,1).toUpperCase();
+            int probability = 80;
+            if (random.nextInt(100)< probability) {
+                randomSentence.append(randomWords[rnd.nextInt(randomWords.length)]);
+            } else {
+                randomSentence.append(generateWord());
+            }
+            randomSentence.substring(0, 1).toUpperCase();
             if ((i + 1 != n2)) {
                 randomSentence.append(twentyPercent());
             } else {
@@ -88,6 +93,8 @@ public class PhraseGenerator {
      */
     public String generateParagraph(){        // generate random paragraph with 'n3' sentences
         randomParagrath = new StringBuilder();
+        // sentences in one paragraph
+        int n3 = 20;
         int n3max = random.nextInt(n3);
         for (int i = 0; i < n3max; i++) {
             if ((i == 0)) {
