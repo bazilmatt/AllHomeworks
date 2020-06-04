@@ -13,10 +13,10 @@ public class RuntimeCompilation {
     public static void main(String[] args) throws Exception {
 
         // Create an empty source File
-        File sourceFile = new File("Hello.java");
+        File sourceFile = new File("Worker1.java");
 
         // hardcode for class
-        String hardCode = "public class Hello { \n public void hello() {\n ";
+        String hardCode = "public class Worker1 implements Worker { \n public void doWork() {\n ";
 
         //buffer code
         Scanner in = new Scanner(System.in);
@@ -44,16 +44,17 @@ public class RuntimeCompilation {
         writer.close();
 
         // compile
-
         JavaCompiler compiler = ToolProvider.getSystemJavaCompiler();
-        File classFileDir = new File("E:\\Kraken\\Allhomeworks\\");
+        File classFileDir = new File("E:"+File.separator+"Kraken"+File.separator+"Allhomeworks\\");
         compiler.run(null, null, null, sourceFile.getPath());
+
         // load
         System.out.println(classFileDir);
         URLClassLoader classLoader = URLClassLoader.newInstance(new URL[]{ classFileDir.toURI().toURL()});
-        Class<?> Hello = classLoader.loadClass("Hello");
-
+        Class<?> Hello = classLoader.loadClass("doWork");
         Hello.getDeclaredConstructor().newInstance();
     }
+
+
 }
 
