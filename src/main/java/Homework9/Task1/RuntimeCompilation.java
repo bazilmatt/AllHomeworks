@@ -10,7 +10,7 @@ import javax.tools.ToolProvider;
 
 public class RuntimeCompilation {
 
-    public static void main(String[] args) throws Exception {
+    public static void main(String[] args)  throws Exception {
 
         // Create an empty source File
         File sourceFile = new File("Worker1.java");
@@ -51,8 +51,9 @@ public class RuntimeCompilation {
         // load
         System.out.println(classFileDir);
         URLClassLoader classLoader = URLClassLoader.newInstance(new URL[]{ classFileDir.toURI().toURL()});
-        Class<?> Hello = classLoader.loadClass("doWork");
-        Hello.getDeclaredConstructor().newInstance();
+        Class<?> Worker1 = classLoader.loadClass("Worker");
+        Worker w = (Worker) Worker1.getDeclaredConstructor().newInstance();
+        w.doWork();
     }
 
 
