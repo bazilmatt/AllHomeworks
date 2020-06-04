@@ -48,18 +48,21 @@ public class PhraseGenerator {
 
             long fileleft;
 
-            while (file.length() < size) {
-                System.out.println("fillength = " + file.length());
-                fileleft = size - file.length();
-                System.out.println("fileleft = " + fileleft);
+
                 try (OutputStreamWriter fos = new OutputStreamWriter(new FileOutputStream(filename))) {
-                    if (buffer.length() > fileleft) {
-                        buffer = buffer.substring(0, (int) (fileleft));
-                        System.out.println(buffer);
-                        fos.append(buffer);
-                    } else {
-                        System.out.println(buffer);
-                        fos.append(buffer);
+                    while (file.length() < size) {
+                        System.out.println(file.getName()+" fillength = " + file.length());
+                        fileleft = size - file.length();
+                        System.out.println(file.getName()+" space left = " + fileleft);
+                        buffer = generateParagraph();
+                            if (buffer.length() > fileleft) {
+                                buffer = buffer.substring(0, (int) (fileleft));
+                                System.out.println(buffer);
+                                fos.append(buffer);
+                            } else {
+                                System.out.println(buffer);
+                                fos.append(buffer);
+                            }
                     }
                 } catch (IOException e) {
                     e.printStackTrace();
@@ -68,7 +71,6 @@ public class PhraseGenerator {
             }
         }
 
-    }
 
     public String generateWord() {
         // letters in one word
