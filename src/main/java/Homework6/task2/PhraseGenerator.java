@@ -1,6 +1,10 @@
 package Homework6.task2;
 
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStreamWriter;
 import java.util.Random;
 
 /**
@@ -24,7 +28,7 @@ public class PhraseGenerator {
     Random rnd = new Random();
    // static Set words = new TreeSet();
     private final int n4 = 1000; // number of words in dictionary
-    private final String[] randomWords = new String[n4]; // words dictionary - propability to take one 1/n4
+    private final String[] dictionary = new String[n4]; // words dictionary - propability to take one 1/n4
     private final String[] endState = {"! ",". ","? "}; // ends of sentences
 
 
@@ -33,10 +37,29 @@ public class PhraseGenerator {
     StringBuilder randomParagrath = new StringBuilder();
 
 
-//    public void getFiles(String path, int n, int size, String[] words, int probability) throws IOException {
-//        File file = new File("bbb");
-        //file.createNewFile();
-//    }
+    public void getFiles(String path,
+                         int n, int size,
+                         String[] words,
+                         int probability) throws IOException {
+
+        for (int i=0; i<n; i++) {
+            String filename = path + n;
+            File file = new File(filename);
+            while (file.getTotalSpace() < size) {
+                OutputStreamWriter fos;
+                fos = new OutputStreamWriter(
+                        new FileOutputStream(filename));
+                try {
+                    fos.append(generateParagraph());
+                } catch (IOException e) {
+                    e.printStackTrace();
+                } finally {
+                    fos.close();
+                }
+            }
+        }
+
+    }
 
     public String generateWord(){
         // letters in one word
@@ -48,11 +71,12 @@ public class PhraseGenerator {
         return new String(word);
     }
 
-    public void generateDictionary() {
+    public String[] generateDictionary() {
         int n4max = random.nextInt(n4);
         for (int i = 0; i < n4max; i++) {
-            randomWords[i] = generateWord();
+            dictionary[i] = generateWord();
         }
+        return dictionary;
     }
 
     public String twentyPercent(){
@@ -64,16 +88,16 @@ public class PhraseGenerator {
      *
      * @return one sentence with n2 words
      */
-    public StringBuilder generateSentence(){
+    public StringBuilder generateSentence(String[] dictionary){
         randomSentence.setLength(0);
-        generateDictionary();
+
         // words in one sentence
         int n2 = 15;
         int n2max = random.nextInt(n2);
         for (int i = 0; i < n2max; i++) {
             int probability = 80;
             if (random.nextInt(100)< probability) {
-                randomSentence.append(randomWords[rnd.nextInt(randomWords.length)]);
+                randomSentence.append(dictionary[rnd.nextInt(dictionary.length)]);
             } else {
                 randomSentence.append(generateWord());
             }
@@ -100,7 +124,7 @@ public class PhraseGenerator {
             if ((i == 0)) {
                 randomParagrath.append('\t');
             }
-            randomParagrath.append(generateSentence());
+            randomParagrath.append(generateSentence(dictionary));
         }
         randomParagrath.append('\n');
         randomParagrath.append('\r');

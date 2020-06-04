@@ -16,18 +16,10 @@ public class Main {
 
 
     public static void main(String[] args) throws IOException {
-        PhraseGenerator pg = new PhraseGenerator();
 
         for (int i = 0; i < 5; i++) {
-            OutputStreamWriter fos;
-            fos = new OutputStreamWriter(new FileOutputStream(String.valueOf(i)));
-            try {
-                fos.append(pg.generateParagraph());
-            } catch (IOException e) {
-                e.printStackTrace();
-            } finally {
-                fos.close();
-            }
+            PhraseGenerator pg = new PhraseGenerator();
+            pg.getFiles("test",2, 100, pg.generateDictionary(), 80);
         }
 
     }
