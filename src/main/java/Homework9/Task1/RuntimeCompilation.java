@@ -2,7 +2,6 @@ package Homework9.Task1;
 
 import java.io.File;
 import java.io.FileWriter;
-import java.lang.reflect.Method;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.Scanner;
@@ -15,10 +14,8 @@ public class RuntimeCompilation {
 
         // Create an empty source File
         File sourceFile = new File("Hello.java");
-        String filePath = sourceFile.getPath();
 
-        // hardcode for class, and get classname
-        String classname = sourceFile.getName().split("\\.")[0];
+        // hardcode for class
         String hardCode = "public class Hello { \n public void hello() {\n ";
 
         //buffer code
@@ -47,7 +44,6 @@ public class RuntimeCompilation {
         writer.close();
 
         // compile
-        File parentDirectory = sourceFile.getParentFile();
 
         JavaCompiler compiler = ToolProvider.getSystemJavaCompiler();
         File classFileDir = new File("E:\\Kraken\\Allhomeworks\\");
@@ -56,9 +52,8 @@ public class RuntimeCompilation {
         System.out.println(classFileDir);
         URLClassLoader classLoader = URLClassLoader.newInstance(new URL[]{ classFileDir.toURI().toURL()});
         Class<?> Hello = classLoader.loadClass("Hello");
-        Method test = Hello.getDeclaredMethod("hello");
-        test.invoke(Hello.newInstance());
 
+        Hello.getDeclaredConstructor().newInstance();
     }
 }
 
