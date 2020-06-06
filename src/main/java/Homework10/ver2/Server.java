@@ -7,7 +7,7 @@ import java.util.HashMap;
 import java.util.Scanner;
 
 public class Server {
-    public static final Integer SERVER_PORT = 4444;
+    public static final Integer SERVER_PORT = 7777;
     public static final Integer USER_PORT = 5555;
     public static DatagramSocket datagramSocket;
     public static DatagramPacket inP, outP;
@@ -27,7 +27,7 @@ public class Server {
             System.err.println("connection Failed");
             e.printStackTrace();
         }
-        buf = "asdasd".getBytes();
+        buf = "textmessage".getBytes();
         outP = new DatagramPacket(buf,0, userAddress, USER_PORT);
         inP = new DatagramPacket(buf,0,userAddress,SERVER_PORT);
 
