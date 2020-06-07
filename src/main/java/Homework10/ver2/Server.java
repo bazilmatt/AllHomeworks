@@ -18,8 +18,17 @@ public class Server {
     //udp socket chat
     public static void main(String[] args) throws IOException {
 
-        Listener listenerThread = new Listener(SERVER_PORT);
-        listenerThread.start();
+
+        //todo
+        // 1) Сохранять клиентов в мапу
+        // 2) на клиенте поднимать такой же мини-receive сервер для получения сообщений
+        // 3) когда один клиент отсылает - сервер рассылает всем
+        // 4) приватные сообщения - регистрация нового пользователя
+        // 5) @nick текст - для личного сообщения
+        //
+
+
+
         InetAddress userAddress = InetAddress.getByName("localhost");
         try {
             datagramSocket = new DatagramSocket(SERVER_PORT);
@@ -34,13 +43,7 @@ public class Server {
         Scanner scanner = new Scanner(System.in);
         String data;
 
-        while ((data = scanner.nextLine()).isEmpty()) {
-            data = scanner.nextLine();
-            sendMessage(userAddress, data);
-            datagramSocket.receive(inP);
-            String text = Arrays.toString(inP.getData());
-            System.out.println(text);
-            System.out.println("sd");
+        while (true) {
             receiveMessage();
         }
     }
@@ -63,6 +66,9 @@ public class Server {
             InetAddress clientAddress = inP.getAddress();
             int clientPort = inP.getPort();
             msgIn = new String(inP.getData(), 0, inP.getLength());
+            outP = new DatagramPacket(msgIn.getBytes(), msgIn.length(), clientAddress, Server.USER_PORT);
+            datagramSocket.send(outP);
+            System.out.println(msgIn);
 
         } catch (IOException e) {
             e.printStackTrace();
