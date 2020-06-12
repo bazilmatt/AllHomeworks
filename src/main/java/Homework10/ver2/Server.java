@@ -8,7 +8,6 @@ import java.util.Scanner;
 
 public class Server {
     public static final Integer SERVER_PORT = 7000;
-    public static final Integer USER_PORT = 9999;
     public static DatagramSocket datagramSocket;
     public static DatagramPacket inP, outP;
     public static byte[] buf;
@@ -28,7 +27,7 @@ public class Server {
             e.printStackTrace();
         }
         buf = "textmessage".getBytes();
-        outP = new DatagramPacket(buf, 0, userAddress, USER_PORT);
+        outP = new DatagramPacket(buf, 0, userAddress, 1234);
         inP = new DatagramPacket(buf, 0, userAddress, SERVER_PORT);
 
         while (flag) {
@@ -59,7 +58,7 @@ public class Server {
 
             String nickName;
             msgIn = new String(inP.getData(), 0, inP.getLength());
-            String textMessage = msgIn.substring(msgIn.indexOf(">")+1);
+            String textMessage = msgIn.substring(msgIn.indexOf(">") + 1);
 
             if (msgIn.startsWith("!")) {
                 nickName = msgIn.substring(msgIn.indexOf("!") + 1);
@@ -67,18 +66,16 @@ public class Server {
             } else if (textMessage.startsWith("@")) {
                 String personalUser = msgIn.substring(msgIn.indexOf("@") + 1, msgIn.indexOf(" "));
                 String message = msgIn.substring(msgIn.indexOf(" ") + 1);
-                try{
+                try {
                     if (users.get(personalUser).equals(null)) throw new Exception();
-                    sendMessage(users.get(personalUser), msgIn.substring(0, msgIn.indexOf(">")+1) + message);
+                    sendMessage(users.get(personalUser), msgIn.substring(0, msgIn.indexOf(">") + 1) + message);
                 } catch (Exception e) {
                     System.err.println("Нет такого пользователя в мапе");
                     e.printStackTrace();
                 }
             } else {
-
                 String finalMsgIn = msgIn;
                 users.entrySet().stream().forEach(e -> sendMessage(e.getValue(), finalMsgIn));
-
                 //sendMessage(users.get("ggg"), "Ответ");
             }
 
@@ -88,16 +85,4 @@ public class Server {
         }
     }
 
-}
-
-
-class User {
-
-    InetAddress addr;
-    int port;
-
-    User(InetAddress a, int p) {
-        addr = a;
-        port = p;
-    }
 }
