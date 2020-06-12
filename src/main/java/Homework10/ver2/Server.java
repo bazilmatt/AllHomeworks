@@ -7,27 +7,18 @@ import java.util.HashMap;
 import java.util.Scanner;
 
 public class Server {
-    public static final Integer SERVER_PORT = 7777;
-    public static final Integer USER_PORT = 5555;
+    public static final Integer SERVER_PORT = 7000;
+    public static final Integer USER_PORT = 9999;
     public static DatagramSocket datagramSocket;
     public static DatagramPacket inP, outP;
     public static byte[] buf;
-    private static HashMap<String, User> users;
+    private static HashMap<String, Integer> users = new HashMap<>();
 
 
     //udp socket chat
     public static void main(String[] args) throws IOException {
 
-
-        //todo
-        // 1) Сохранять клиентов в мапу
-        // 2) на клиенте поднимать такой же мини-receive сервер для получения сообщений
-        // 3) когда один клиент отсылает - сервер рассылает всем
-        // 4) приватные сообщения - регистрация нового пользователя
-        // 5) @nick текст - для личного сообщения
-        //
-
-
+        boolean flag = true;
 
         InetAddress userAddress = InetAddress.getByName("localhost");
         try {
@@ -37,20 +28,18 @@ public class Server {
             e.printStackTrace();
         }
         buf = "textmessage".getBytes();
-        outP = new DatagramPacket(buf,0, userAddress, USER_PORT);
-        inP = new DatagramPacket(buf,0,userAddress,SERVER_PORT);
+        outP = new DatagramPacket(buf, 0, userAddress, USER_PORT);
+        inP = new DatagramPacket(buf, 0, userAddress, SERVER_PORT);
 
-        Scanner scanner = new Scanner(System.in);
-        String data;
-
-        while (true) {
+        while (flag) {
             receiveMessage();
         }
     }
 
-    private static void sendMessage(InetAddress addr, String msg) {
+
+    private static void sendMessage(Integer port, String msg) {
         try {
-            outP = new DatagramPacket(msg.getBytes(), msg.length(), addr, Server.USER_PORT);
+            outP = new DatagramPacket(msg.getBytes(), msg.length(), InetAddress.getByName("localhost"), port);
             datagramSocket.send(outP);
         } catch (IOException e) {
             e.printStackTrace();
@@ -63,16 +52,52 @@ public class Server {
             buf = new byte[256];
             inP = new DatagramPacket(buf, buf.length);
             datagramSocket.receive(inP);
-            InetAddress clientAddress = inP.getAddress();
-            int clientPort = inP.getPort();
+
+
+            int userPort = inP.getPort();
+            System.out.println("userport " + userPort);
+
+            String nickName;
             msgIn = new String(inP.getData(), 0, inP.getLength());
-            outP = new DatagramPacket(msgIn.getBytes(), msgIn.length(), clientAddress, Server.USER_PORT);
-            datagramSocket.send(outP);
-            System.out.println(msgIn);
+            String textMessage = msgIn.substring(msgIn.indexOf(">")+1);
+
+            if (msgIn.startsWith("!")) {
+                nickName = msgIn.substring(msgIn.indexOf("!") + 1);
+                users.put(nickName, userPort);
+            } else if (textMessage.startsWith("@")) {
+                String personalUser = msgIn.substring(msgIn.indexOf("@") + 1, msgIn.indexOf(" "));
+                String message = msgIn.substring(msgIn.indexOf(" ") + 1);
+                try{
+                    if (users.get(personalUser).equals(null)) throw new Exception();
+                    sendMessage(users.get(personalUser), msgIn.substring(0, msgIn.indexOf(">")+1) + message);
+                } catch (Exception e) {
+                    System.err.println("Нет такого пользователя в мапе");
+                    e.printStackTrace();
+                }
+            } else {
+
+                String finalMsgIn = msgIn;
+                users.entrySet().stream().forEach(e -> sendMessage(e.getValue(), finalMsgIn));
+
+                //sendMessage(users.get("ggg"), "Ответ");
+            }
+
 
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
+}
+
+
+class User {
+
+    InetAddress addr;
+    int port;
+
+    User(InetAddress a, int p) {
+        addr = a;
+        port = p;
+    }
 }

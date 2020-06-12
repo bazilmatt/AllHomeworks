@@ -8,9 +8,10 @@ import java.net.*;
 
 public class Listener extends Thread {
     private int port;
+    private DatagramSocket ds;
 
-    public Listener(int port) {
-        this.port = port;
+    public Listener(DatagramSocket dss) {
+        this.ds = dss;
 
     }
 
@@ -20,13 +21,18 @@ public class Listener extends Thread {
         byte[] msg = new byte[256];
 
         try {
-            DatagramSocket datagramSocket = new DatagramSocket(port);
-            DatagramPacket inP = new DatagramPacket(msg, 0, InetAddress.getByName("localhost"), port);
-            String message;
-            datagramSocket.receive(inP);
-            message = inP.getData().toString();
+         //   DatagramSocket datagramSocket = new DatagramSocket(port);
+
             while (true) {
-                System.out.println(message);
+                String message;
+                DatagramPacket inP = new DatagramPacket(msg, 0, InetAddress.getByName("localhost"), port);
+                String msgIn = "";
+                msg = new byte[256];
+                inP = new DatagramPacket(msg, msg.length);
+                ds.receive(inP);
+                msgIn = new String(inP.getData(), 0, inP.getLength());
+                System.out.println(msgIn);
+
             }
         } catch (IOException e) {
             e.printStackTrace();

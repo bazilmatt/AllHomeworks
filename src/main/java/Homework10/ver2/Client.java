@@ -1,57 +1,48 @@
 package Homework10.ver2;
 
-
-import javax.xml.crypto.Data;
-import java.io.BufferedWriter;
 import java.io.IOException;
-import java.io.OutputStreamWriter;
 import java.net.*;
 import java.util.Scanner;
 
-public class Client extends Thread {
-    public static Integer CLIENT_PORT = 5555;
-    public static Integer SERVER_PORT = 7777;
+public class Client {
+    public static Integer USER_PORT;
+    public static Integer SERVER_PORT = 7000;
 
-    public static void main(String[] args) throws IOException {
-        Listener listenerThread = new Listener(CLIENT_PORT);
-        listenerThread.start();
+    public static void main(String[] args) {
 
-        byte[] data = "hello".getBytes();
-        String line = "";
+
+        byte[] data;
+        String line;
+
+        Scanner scanner = new Scanner(System.in);
+
+        System.out.println("Введите !ник");
+
 
         try {
             InetAddress addr = InetAddress.getByName("localhost");
-            DatagramPacket incomingPack = new DatagramPacket(data, data.length);
-
             DatagramSocket ds = new DatagramSocket();
-            Scanner scanner = new Scanner(System.in);
+
+
+
+            System.out.println("порт отправки сообщений" + ds.getLocalPort());
+
+
+            DatagramPacket outPack;
+            Listener listenerThread = new Listener(ds);
+            listenerThread.start();
 
             while (!(line = scanner.nextLine()).isEmpty()) {
-                data = line.getBytes();
-                DatagramPacket outcomingPack = new DatagramPacket(data, data.length, addr, SERVER_PORT);
-                ds.send(outcomingPack);
-            }
-//            ds.receive(incomingPack);
-            ds.close();
+                String message = line;
 
+                outPack = new DatagramPacket(message.getBytes(), message.length(), addr, SERVER_PORT);
+                ds.send(outPack);
+            }
+
+            ds.close();
 
         } catch (IOException e) {
             e.printStackTrace();
         }
-
-
     }
-//        try (Socket socket = new Socket("127.0.0.1", Server.SERVER_PORT);
-//             BufferedWriter bufferedWriter = new BufferedWriter(
-//                     new OutputStreamWriter(socket.getOutputStream()))) {
-//            Scanner scanner = new Scanner(System.in);
-//            String message;
-//            while (!(message = scanner.nextLine()).isEmpty()) {
-//                bufferedWriter.write(message);
-//                bufferedWriter.newLine();
-//                bufferedWriter.flush();
-//            }
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//        }
 }
