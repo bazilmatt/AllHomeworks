@@ -15,6 +15,7 @@ public class Main {
 
         Clazz clazz2 = (Clazz) deSerialize("file1");
         System.out.println(clazz2.a);
+        System.out.println(clazz2.aClass.toString());
     }
 
     public static void serialize(Object object, String file) {
