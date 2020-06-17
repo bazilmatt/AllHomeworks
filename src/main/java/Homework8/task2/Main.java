@@ -30,7 +30,6 @@ public class Main {
             for (Field f : fields) {
                 f.setAccessible(true);
                 objectOutputStream.writeObject(f.get(object));
-
             }
 
         } catch (IllegalAccessException | IOException e) {
@@ -38,6 +37,7 @@ public class Main {
         }
 
     }
+    //todo сделать рекурсивный вызов сериализации и десереализации для ссылочных полей
 
     public static Object deSerialize(String file) {
         Object object = null;
@@ -45,6 +45,7 @@ public class Main {
 
             String className = inputStream.readUTF();
 
+            //todo разобраться чего идея от меня хочет
             Class clazz = Class.forName(className);
 
             object = clazz.getConstructor().newInstance(); // Создаем новый объект с полями по умолчанию
@@ -52,7 +53,7 @@ public class Main {
             Field[] fields = clazz.getDeclaredFields();
             for (Field field : fields) {
                 field.setAccessible(true);
-                field.set(object,inputStream.readObject());
+                field.set(object, inputStream.readObject());
             }
 
         } catch (ClassNotFoundException | IOException | InstantiationException | InvocationTargetException | NoSuchMethodException | IllegalAccessException e) {
