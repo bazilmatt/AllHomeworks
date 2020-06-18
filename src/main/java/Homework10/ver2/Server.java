@@ -67,7 +67,7 @@ public class Server {
                 String personalUser = msgIn.substring(msgIn.indexOf("@") + 1, msgIn.indexOf(" "));
                 String message = msgIn.substring(msgIn.indexOf(" ") + 1);
                 try {
-                    if (users.get(personalUser).equals(null)) throw new Exception();
+                    if (!users.containsKey(personalUser)) throw new Exception();
                     sendMessage(users.get(personalUser), msgIn.substring(0, msgIn.indexOf(">") + 1) + message);
                 } catch (Exception e) {
                     System.err.println("Нет такого пользователя в мапе");
@@ -75,7 +75,7 @@ public class Server {
                 }
             } else {
                 String finalMsgIn = msgIn;
-                users.entrySet().stream().forEach(e -> sendMessage(e.getValue(), finalMsgIn));
+                users.forEach((key, value) -> sendMessage(value, finalMsgIn));
                 //sendMessage(users.get("ggg"), "Ответ");
             }
 
