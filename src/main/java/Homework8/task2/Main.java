@@ -29,15 +29,26 @@ public class Main {
 
             for (Field f : fields) {
                 f.setAccessible(true);
-                objectOutputStream.writeObject(f.get(object));
+                if (!f.getClass().isPrimitive()){ //todo какое условие позволит определить, что объект не примитив
+                    objectOutputStream.writeUTF(serializeField(f));
+                } else {
+                    objectOutputStream.writeObject(f.get(object));
+                }
             }
-
         } catch (IllegalAccessException | IOException e) {
             e.printStackTrace();
         }
-
     }
-    //todo сделать рекурсивный вызов сериализации и десереализации для ссылочных полей
+
+    public static String serializeField(Object f){
+        Class <?> fieldClass = f.getClass();
+        Field[] fields = fieldClass.getDeclaredFields();
+        String Rezult = fieldClass.getName();
+        for (Field field: fields) {
+            Rezult+=field;
+        }
+        return Rezult;
+    }
 
     public static Object deSerialize(String file) {
         Object object = null;
@@ -45,7 +56,9 @@ public class Main {
 
             String className = inputStream.readUTF();
 
-            //todo разобраться чего идея от меня хочет
+            //todo 1) разобраться чего идея от меня хочет
+            //     2) Как десериализовать непримитивные поля?
+
             Class clazz = Class.forName(className);
 
             object = clazz.getConstructor().newInstance(); // Создаем новый объект с полями по умолчанию

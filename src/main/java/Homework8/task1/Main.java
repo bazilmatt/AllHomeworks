@@ -28,9 +28,10 @@ public class Main {
             objectOutputStream.writeUTF(objClass.getName());
 
             for (Field f : fields) {
-                f.setAccessible(true);
-                objectOutputStream.writeObject(f.get(object));
 
+                f.setAccessible(true);
+
+                objectOutputStream.writeObject(f.get(object));
             }
 
         } catch (FileNotFoundException e) {
