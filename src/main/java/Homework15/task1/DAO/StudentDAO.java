@@ -1,8 +1,6 @@
 package Homework15.task1.DAO;
 
 import Homework15.task1.ConnectionManager.DBManager;
-import Homework15.task1.ConnectionManager.DBManagerIMPL;
-import Homework15.task1.DB;
 import Homework15.task1.pojo.StudentPOJO;
 
 import java.sql.Connection;
@@ -11,9 +9,9 @@ import java.sql.SQLException;
 import java.sql.Statement;
 
 public class StudentDAO {
-    private DBManager dbManager;
+    private final DBManager dbManager;
 
-    public StudentDAO(DBManager dbManager) throws SQLException {
+    public StudentDAO(DBManager dbManager) {
         this.dbManager = dbManager;
     }
 
@@ -23,7 +21,7 @@ public class StudentDAO {
     public static final String DELETE_FROM_STUDENT = "DELETE FROM students WHERE id=?";
 
 
-    public void addStudent(StudentPOJO student) {
+    public long addStudent(StudentPOJO student) {
         try (Connection connection = dbManager.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(INSERT_INTO_STUDENT, Statement.RETURN_GENERATED_KEYS)) {
             preparedStatement.setString(1, student.getName());
@@ -31,7 +29,9 @@ public class StudentDAO {
             preparedStatement.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
+            return 2L;
         }
+        return 1L;
     }
 }
 

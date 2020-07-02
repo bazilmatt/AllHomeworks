@@ -3,9 +3,11 @@ package Homework15.task1;
 import Homework15.task1.ConnectionManager.DBManager;
 import Homework15.task1.ConnectionManager.DBManagerIMPL;
 import Homework15.task1.DAO.StudentDAO;
+import Homework15.task1.pojo.ArticlePojo;
 import Homework15.task1.pojo.StudentPOJO;
 
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.logging.Logger;
 
 public class Main {
@@ -20,7 +22,10 @@ public class Main {
     }
 
     public StudentPOJO generateStudent(){
-        StudentPOJO student = new StudentPOJO("Vasya", 1);
-        return student;
+        return new StudentPOJO("Vasya", 1);
+    }
+
+    public ArticlePojo generateArticle(){
+        return new ArticlePojo("article1", "Vasya");
     }
 }
