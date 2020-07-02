@@ -1,111 +1,37 @@
 package Homework15.task1;
 
 
+import Homework15.task1.ConnectionManager.DBManagerIMPL;
 import org.postgresql.util.PSQLException;
 
 import java.sql.*;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 
 public class DB {
-    static Map<String, Integer> secureMap = new HashMap<>();
-
-    public static void main(String[] args) throws ClassNotFoundException {
-        for (int i = 0; i < 10 ; i++) {
-            secureMap.put("User"+i, 1);
-        }
-        Set set = secureMap.entrySet();
-
-        try (Connection connection = DriverManager.getConnection("jdbc:postgresql://localhost:5432/innopolis", "postgres", "11111")) {
-            renewDB(connection);
-            resultSetQuery(connection);
-            parametrizedQuery(connection);
-            manualCommit(connection);
-
-        } catch (SQLException throwables) {
-            throwables.printStackTrace();
-        }
-    }
-
-    public static void resultSetQuery(Connection connection) throws SQLException {
-        try(Statement statement = connection.createStatement()){
-            ResultSet resultSet = statement.executeQuery("SELECT * FROM users");
-            while(resultSet.next()){
-                System.out.println("id= " + resultSet.getInt("id"));
-                System.out.println("name= "+ resultSet.getString("name"));
-            }
-        }
-    }
-
-    public static void parametrizedQuery(Connection connection) throws SQLException{
-        try(PreparedStatement prepareStatement = connection.prepareStatement("SELECT * from users where id = ?")){
-            prepareStatement.setInt(1,2);
-            prepareStatement.addBatch();
-        }
-        try (PreparedStatement preparedStatement = connection.prepareStatement("INSERT INTO users (Name, SecurityLevel) values (?,?)")){
-            preparedStatement.setString(1,"addedName5");
-            preparedStatement.setInt(2, 10);
-            preparedStatement.addBatch();
-            for (int i=0; i<10; i++){       //todo как добавлять из мапы?
-                preparedStatement.setString(1,"User"+i);
-                preparedStatement.setInt(2, 4);
-                preparedStatement.addBatch();
-            }
-            preparedStatement.executeBatch();
-        }
-    }
-
-    public static void manualCommit(Connection connection) throws SQLException {
-        Savepoint savepoint = null;
-        try(Statement statement = connection.createStatement()){
-            connection.setAutoCommit(false);
-            statement.execute("INSERT INTO users (Name, SecurityLevel) VALUES ('admin' , 999)");
-            savepoint = connection.setSavepoint("aaaa");
-            //выбрасываем exception
-            statement.execute("INSERT INTO users (Name, Scurity) VALUES ('хацкер', 100500)");
-            connection.commit();
-            connection.setAutoCommit(true);
-            
-        } catch (SQLException throwables) {
-            connection.rollback(savepoint);
-            System.err.println("откат при получении исключения, admin при этом добавится");
-            connection.commit();
-            //throwables.printStackTrace(); 
-        }
-
-
-    }
-
 
 
     public static void renewDB(Connection connection) throws SQLException {
 
         try (Statement statement = connection.createStatement()) {
-            statement.execute("Drop table users;" +
-                    "DROP table blog;" +
+            statement.execute("Drop table if exists students;" +
+                    "DROP table if exists article;" +
 
-                    "CREATE TABLE IF Not exists Blog(id bigserial primary key," +
+                    "CREATE TABLE IF Not exists Articles(id bigserial primary key," +
                     "author varchar," +
                     "securityLevel integer, " +
-                    "label varchar," +
-                    "text varchar);\n" +
+                    "label varchar);\n" +
 
-                    "CREATE TABLE IF Not exists users(" +
+                    "CREATE TABLE IF Not exists students(" +
                     "id bigSerial primary key, " +
                     "name varchar NOT NULL, " +
                     "SecurityLevel integer);" +
 
-                    "INSERT INTO users (Name, SecurityLevel) " +
+                    "INSERT INTO students (Name, SecurityLevel) " +
                     "values ('name1',1), ('name2', 2);" +
-                    "INSERT INTO blog (label, text, securitylevel) " +
-                    "values ('article1','text1',1), ('article2', 'text2', 2)");
+                    "INSERT INTO articles (author, securitylevel, label) " +
+                    "values ('author1',2,'label1'), ('author2', 2, 'label2')");
 
         }
-
-
     }
-
-
 }
